@@ -10,6 +10,8 @@ namespace DESAlgorithm
     {
         public static string Crypt(string data, string key, EnumProcessType processType)
         {
+            //data karıştırılır
+
             string binaryData = BinaryHelper.GetBits(data);
 
             string result = "";
@@ -27,6 +29,8 @@ namespace DESAlgorithm
                 {
                     finished = true;
                 }
+
+                currentBinaryString = InitialPermutation(currentBinaryString);
 
                 //32'şer bit olarak data ikiye ayrılır
                 string leftBinaryString = currentBinaryString.Substring(0, currentBinaryString.Length / 2);
@@ -52,7 +56,10 @@ namespace DESAlgorithm
                     rightBinaryString = prevLeftBinaryString;
                 }
 
-                result += leftBinaryString + rightBinaryString;
+                //sonuçta elde edilen left ve right birbirine eklenerek 64 bitlik data elde edilir
+                var resultBinary = leftBinaryString + rightBinaryString;
+                resultBinary = FinalPermutation(resultBinary);
+                result += resultBinary;
 
                 if (finished)
                     break;
@@ -96,7 +103,22 @@ namespace DESAlgorithm
         {
             string result = "";
 
-            foreach(int permutationTableItem in Data.InıtialPermutationTable)
+            foreach (int permutationTableItem in Data.InitialPermutationTable)
+            {
+                if (input.Length >= permutationTableItem)
+                {
+                    result += input[permutationTableItem - 1];
+                }
+            }
+
+            return result;
+        }
+
+        public static string FinalPermutation(string input)
+        {
+            string result = "";
+
+            foreach (int permutationTableItem in Data.FinalPermutationTable)
             {
                 if (input.Length >= permutationTableItem)
                 {
@@ -178,6 +200,12 @@ namespace DESAlgorithm
             return result;
         }
 
+        /// <summary>
+        /// ikilik sistemde bitler toplanarak mod2'si alınır(XOR işlemi)
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
         public static char XOR(char one, char two)
         {
             return Data.XORData[one][two];

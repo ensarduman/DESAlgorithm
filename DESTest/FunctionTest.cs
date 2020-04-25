@@ -12,14 +12,27 @@ namespace DESTest
         [TestMethod]
         public void InitialPermutation()
         {
-            for(int i = 1; i <= 64; i++)
+            for (int i = 1; i <= 64; i++)
             {
-                Assert.IsTrue(Data.InıtialPermutationTable.Contains(i));
+                Assert.IsTrue(Data.InitialPermutationTable.Contains(i));
             }
 
             var data = "0011111111100111000100111101100000101000010110001111111100101100";
             var output = AlgorithmFunctions.InitialPermutation(data);
             Assert.IsTrue(output == "0110101001101101110000110100011101001010110100111111100101000111");
+        }
+
+        [TestMethod]
+        public void FinalPermutation()
+        {
+            for (int i = 1; i <= 64; i++)
+            {
+                Assert.IsTrue(Data.InitialPermutationTable.Contains(i));
+            }
+
+            var data = "0011111111100111000100111101100000101000010110001111111100101100";
+            var output = AlgorithmFunctions.FinalPermutation(data);
+            Assert.IsTrue(output == "0101110001011100010110101110101101101101110110100011100100011001");
         }
 
         [TestMethod]
