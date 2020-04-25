@@ -28,16 +28,28 @@ namespace DESAlgorithm
                     finished = true;
                 }
 
+                //32'şer bit olarak data ikiye ayrılır
                 string leftBinaryString = currentBinaryString.Substring(0, currentBinaryString.Length / 2);
                 string rightBinaryString = currentBinaryString.Substring(currentBinaryString.Length / 2);
 
+                //cryp işlemleri 16 kez tekrarlanır. Her adımda data çaprazlanır
                 for (int cryptIndex = 0; cryptIndex < 16; cryptIndex++)
                 {
-                    string cryptedRightBinaryString = CryptFunction(rightBinaryString, key);
+                    //Bu adım için 56 bitlik Key'den 48 bitlik yeni key üretilir
+                    var transformedKey = KeyTransformation(key, cryptIndex, processType);
+
+                    //leftBinaryString öncelikle 48 bit'e genişletilir
+                    leftBinaryString = ExpentsonPermutation(leftBinaryString);
+
+                    //Key (48bit) ve leftBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
+                    string cryptedRightBinaryString = XORArray(leftBinaryString, transformedKey);
+
+                    //leftBinaryString tekrar 48'den 32 bit'e küçültülür(SBoxSubstuation)
+
+                    //left ve right'ın yerleri değiştirilerek yeni adıma hazırlanır. (çaprazlama)
                     string prevLeftBinaryString = leftBinaryString;
                     leftBinaryString = cryptedRightBinaryString;
                     rightBinaryString = prevLeftBinaryString;
-                    key = KeyTransformation(key, cryptIndex, processType);
                 }
 
                 result += leftBinaryString + rightBinaryString;
@@ -49,23 +61,16 @@ namespace DESAlgorithm
             return result;
         }
 
-        public static string CryptFunction(string rightBinaryString, string key)
+        public static string XORArray(string input, string key)
         {
             var res = "";
-            foreach (var currentChar in rightBinaryString)
+
+            for (int inputIndex = 0; inputIndex < input.Length; inputIndex++)
             {
-                if (currentChar == '1')
-                {
-                    res += "0";
-                }
-                else
-                {
-                    res += "1";
-                }
+                res += XOR(input[inputIndex], key[inputIndex]);
             }
 
-
-            return rightBinaryString;
+            return input;
         }
 
         public static string KeyTransformation(string baseKey, int index, EnumProcessType processType)
