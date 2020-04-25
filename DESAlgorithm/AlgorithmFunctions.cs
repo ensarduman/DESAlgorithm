@@ -8,25 +8,107 @@ namespace DESAlgorithm
 {
     public class AlgorithmFunctions
     {
-        //InıtialPermutationTable
-        public static int[] permutationTable = new int[]
-        {
-                58,50,42,34,26,18,10,2,60,52,44,36,28,20,12,4,
-                62,54,46,38,30,22,14,6,64,56,48,40,32,24,16,8,
-                57,49,41,33,25,17,9,1,59,51,43,35,27,19,11,3,
-                61,53,45,37,29,21,13,5,63,55,47,39,31,23,15,7
-        };
 
-        public string InitialPermutation(string input)
+        public static string Crypt(string leftBinaryString, string rightBinaryString, string key)
+        {
+            for (int cryptIndex = 0; cryptIndex < 16; cryptIndex++)
+            {
+                string cryptedRightBinaryString = CryptFunction(rightBinaryString, key);
+                string prevLeftBinaryString = leftBinaryString;
+                leftBinaryString = cryptedRightBinaryString;
+                rightBinaryString = prevLeftBinaryString;
+                key = GenerateNewKey(key);
+            }
+
+            return leftBinaryString + rightBinaryString;
+        }
+
+        public static string CryptFunction(string rightBinaryString, string key)
+        {
+            var res = "";
+            foreach (var currentChar in rightBinaryString)
+            {
+                if (currentChar == '1')
+                {
+                    res += "0";
+                }
+                else
+                {
+                    res += "1";
+                }
+            }
+
+
+            return rightBinaryString;
+        }
+
+        public static string GenerateNewKey(string oldKey)
+        {
+            return oldKey;
+        }
+
+        public static string InitialPermutation(string input)
         {
             string result = "";
 
-            foreach(int permutationTableItem in permutationTable)
+            foreach(int permutationTableItem in Data.InıtialPermutationTable)
             {
                 if (input.Length >= permutationTableItem)
                 {
                     result += input[permutationTableItem - 1];
                 }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// anahtar oluşturma
+        /// Circular Left shift
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static string KeyTransformationEncryption(string key, int index)
+        {
+            char[] resultChars = new char[key.Length];
+
+            int shift = Data.CircularLeftshiftTable[index];
+
+            for(int keyCharIndex = 0; keyCharIndex < key.Length; keyCharIndex++)
+            {
+                resultChars[(keyCharIndex + shift) % (key.Length)] = key[keyCharIndex];
+            }
+
+            string result = "";
+            foreach(var resultChar in resultChars)
+            {
+                result += resultChar;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// anahtar oluşturma
+        /// Circular Left shift
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static string KeyTransformationDecryption(string key, int index)
+        {
+            char[] resultChars = new char[key.Length];
+
+            int shift = Data.CircularLeftshiftTable.Reverse().ToArray()[index];
+
+            for (int keyCharIndex = 0; keyCharIndex < key.Length; keyCharIndex++)
+            {
+                resultChars[(keyCharIndex - shift + key.Length) % (key.Length)] = key[keyCharIndex];
+            }
+
+            string result = "";
+            foreach (var resultChar in resultChars)
+            {
+                result += resultChar;
             }
 
             return result;

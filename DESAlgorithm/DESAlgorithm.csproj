@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AlgorithmFunctions.cs" />
     <Compile Include="BinaryHelper.cs" />
+    <Compile Include="Data.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
