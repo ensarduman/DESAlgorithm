@@ -113,5 +113,35 @@ namespace DESAlgorithm
 
             return result;
         }
+
+        public static string CompressionPermutation(string input)
+        {
+            string result = "";
+
+            foreach (int permutationTableItem in Data.CompressionPermutationTable)
+            {
+                if (input.Length >= permutationTableItem)
+                {
+                    result += input[permutationTableItem - 1];
+                }
+            }
+
+            return result;
+        }
+
+        public static string ExpentsonPermutation(string input)
+        {
+            string result = "";
+
+            foreach (int permutationTableItem in Data.ExpansionPermutationTable)
+            {
+                if (input.Length >= permutationTableItem)
+                {
+                    result += input[permutationTableItem - 1];
+                }
+            }
+
+            return result;
+        }
     }
 }

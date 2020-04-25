@@ -23,21 +23,33 @@ namespace DESTest
         }
 
         [TestMethod]
-        public void CompressionPermutation()
-        {
-            for (int i = 1; i <= 56; i++)
-            {
-                Assert.IsTrue(Data.CompressionPermutationTable.Length == 48);
-            }
-        }
-
-        [TestMethod]
         public void KeyTransformation()
         {
             string data = "ENSAR DUMAN";
             var res = AlgorithmFunctions.KeyTransformationEncryption(data, 0);
             res = AlgorithmFunctions.KeyTransformationDecryption(res, 0);
             Assert.IsTrue(res == data);
+        }
+
+        [TestMethod]
+        public void CompressionPermutation()
+        {
+            Assert.IsTrue(Data.CompressionPermutationTable.Length == 48);
+
+            string data = "ENSAR DUMAN";
+            //56 to 48
+            var res = AlgorithmFunctions.CompressionPermutation(data);
+        }
+
+        [TestMethod]
+        public void ExpensionPermutation()
+        {
+            Assert.IsTrue(Data.ExpansionPermutationTable.Length == 48);
+
+            string data = "ENSAR DUMAN";
+
+            //32 to 48
+            var res2 = AlgorithmFunctions.ExpentsonPermutation(data);
         }
     }
 }
