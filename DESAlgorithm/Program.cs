@@ -11,42 +11,12 @@ namespace DESAlgorithm
     {
         static void Main(string[] args)
         {
-            string data = "ENSAR DUMAN";
-            string binaryData = BinaryHelper.GetBits(data);
-            Console.WriteLine(binaryData);
-            Console.WriteLine(binaryData.Length);
+            string data = "ENSARDUM";
+            string key = "10111110101011100001110001001110000010000100100000100011";
+            var crypted = AlgorithmFunctions.Crypt(data, key, EnumProcessType.ENCRYPTION);
 
-            string result = "";
-            for (int index = 0; index < ((decimal)binaryData.Length / (decimal)64); index++)
-            {
-                bool finished = false;
-
-                string currentBinaryString = "";
-
-                currentBinaryString = binaryData.Substring(index * 64);
-
-                if (currentBinaryString.Length > 64)
-                {
-                    currentBinaryString = currentBinaryString.Substring(0, 64);
-                }
-                else
-                {
-                    finished = true;
-                }
-
-                string leftBinaryString = currentBinaryString.Substring(0, currentBinaryString.Length / 2);
-                string rightBinaryString = currentBinaryString.Substring(currentBinaryString.Length / 2);
-
-                result +=  AlgorithmFunctions.Crypt(leftBinaryString, rightBinaryString, "101010101");
-
-                if (finished)
-                    break;
-            }
-
-            Console.WriteLine(result);
-            Console.WriteLine(result.Length);
+            Console.WriteLine(crypted);
             Console.ReadLine();
-
         }
     }
 }

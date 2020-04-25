@@ -46,5 +46,14 @@ namespace DESAlgorithm
             16,17,18,19,20,21,20,21,22,23,24,25,
             24,25,26,27,28,29,28,29,30,31,32,1
         };
+
+        /// <summary>
+        /// XOR function data
+        /// </summary>
+        public static Dictionary<char, Dictionary<char, char>> XORData = new Dictionary<char, Dictionary<char, char>>
+        {
+            {'0', new Dictionary<char, char>{ { '0', '0'}, { '1', '1' } } },
+            {'1', new Dictionary<char, char>{ { '0', '1'}, { '1', '0' } } },
+        };
     }
 }

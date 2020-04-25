@@ -23,11 +23,11 @@ namespace DESTest
         }
 
         [TestMethod]
-        public void KeyTransformation()
+        public void CircularLeftShift()
         {
             string data = "ENSAR DUMAN";
-            var res = AlgorithmFunctions.KeyTransformationEncryption(data, 0);
-            res = AlgorithmFunctions.KeyTransformationDecryption(res, 0);
+            var res = AlgorithmFunctions.CircularLeftShift(data, 0, EnumProcessType.ENCRYPTION);
+            res = AlgorithmFunctions.CircularLeftShift(res, 0, EnumProcessType.DECRYPTION);
             Assert.IsTrue(res == data);
         }
 
@@ -50,6 +50,23 @@ namespace DESTest
 
             //32 to 48
             var res2 = AlgorithmFunctions.ExpentsonPermutation(data);
+        }
+
+        [TestMethod]
+        public void XORFunction()
+        {
+            Assert.IsTrue(AlgorithmFunctions.XOR('1', '1') == '0');
+            Assert.IsTrue(AlgorithmFunctions.XOR('1', '0') == '1');
+            Assert.IsTrue(AlgorithmFunctions.XOR('0', '1') == '1');
+            Assert.IsTrue(AlgorithmFunctions.XOR('0', '0') == '0');
+        }
+
+        [TestMethod]
+        public void KeyTransformantion()
+        {
+            string key = "10111110101011100001110001001110000010000100100000100011";
+            var transformedKey = AlgorithmFunctions.KeyTransformation(key, 0, EnumProcessType.ENCRYPTION);
+            Assert.IsTrue(transformedKey.Length == 48);
         }
     }
 }

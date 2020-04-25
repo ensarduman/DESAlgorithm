@@ -18,4 +18,11 @@ namespace DESAlgorithm
             return sb.ToString();
         }
     }
+
+    public enum EnumProcessType
+    {
+        ENCRYPTION,
+        DECRYPTION
+    }
+
 }

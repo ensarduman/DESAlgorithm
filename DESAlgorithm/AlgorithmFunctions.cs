@@ -8,19 +8,45 @@ namespace DESAlgorithm
 {
     public class AlgorithmFunctions
     {
-
-        public static string Crypt(string leftBinaryString, string rightBinaryString, string key)
+        public static string Crypt(string data, string key, EnumProcessType processType)
         {
-            for (int cryptIndex = 0; cryptIndex < 16; cryptIndex++)
+            string binaryData = BinaryHelper.GetBits(data);
+
+            string result = "";
+            for (int index = 0; index < ((decimal)binaryData.Length / (decimal)64); index++)
             {
-                string cryptedRightBinaryString = CryptFunction(rightBinaryString, key);
-                string prevLeftBinaryString = leftBinaryString;
-                leftBinaryString = cryptedRightBinaryString;
-                rightBinaryString = prevLeftBinaryString;
-                key = GenerateNewKey(key);
+                bool finished = false;
+
+                string currentBinaryString = binaryData.Substring(index * 64);
+
+                if (currentBinaryString.Length > 64)
+                {
+                    currentBinaryString = currentBinaryString.Substring(0, 64);
+                }
+                else
+                {
+                    finished = true;
+                }
+
+                string leftBinaryString = currentBinaryString.Substring(0, currentBinaryString.Length / 2);
+                string rightBinaryString = currentBinaryString.Substring(currentBinaryString.Length / 2);
+
+                for (int cryptIndex = 0; cryptIndex < 16; cryptIndex++)
+                {
+                    string cryptedRightBinaryString = CryptFunction(rightBinaryString, key);
+                    string prevLeftBinaryString = leftBinaryString;
+                    leftBinaryString = cryptedRightBinaryString;
+                    rightBinaryString = prevLeftBinaryString;
+                    key = KeyTransformation(key, cryptIndex, processType);
+                }
+
+                result += leftBinaryString + rightBinaryString;
+
+                if (finished)
+                    break;
             }
 
-            return leftBinaryString + rightBinaryString;
+            return result;
         }
 
         public static string CryptFunction(string rightBinaryString, string key)
@@ -42,9 +68,23 @@ namespace DESAlgorithm
             return rightBinaryString;
         }
 
-        public static string GenerateNewKey(string oldKey)
+        public static string KeyTransformation(string baseKey, int index, EnumProcessType processType)
         {
-            return oldKey;
+            //56 bit'lik Key 28 er iki diziye ayrılır
+            string leftBinaryString = baseKey.Substring(0, baseKey.Length / 2);
+            string rightBinaryString = baseKey.Substring(baseKey.Length / 2);
+
+            leftBinaryString = CircularLeftShift(leftBinaryString, index, processType);
+            rightBinaryString = CircularLeftShift(rightBinaryString, index, processType);
+
+            /*Bu diziler birleştirilip sonrasında compression işlemi uygulanarak
+             * 56 bitten 48 bit elde edilir
+            */
+
+            var transformedKey = CompressionPermutation(leftBinaryString + rightBinaryString);
+
+
+            return transformedKey;
         }
 
         public static string InitialPermutation(string input)
@@ -63,50 +103,39 @@ namespace DESAlgorithm
         }
 
         /// <summary>
-        /// anahtar oluşturma
+        /// anahtar oluşturma için laydırma işlemi
         /// Circular Left shift
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static string KeyTransformationEncryption(string key, int index)
+        public static string CircularLeftShift(string key, int index, EnumProcessType processType)
         {
             char[] resultChars = new char[key.Length];
 
-            int shift = Data.CircularLeftshiftTable[index];
+            int shift;
+            if (processType == EnumProcessType.ENCRYPTION)
+            {
+                shift = Data.CircularLeftshiftTable[index];
+            }
+            else
+            {
+                shift = Data.CircularLeftshiftTable.Reverse().ToArray()[index];
+            }
 
             for(int keyCharIndex = 0; keyCharIndex < key.Length; keyCharIndex++)
             {
-                resultChars[(keyCharIndex + shift) % (key.Length)] = key[keyCharIndex];
+                if (processType == EnumProcessType.ENCRYPTION)
+                {
+                    resultChars[(keyCharIndex + shift) % (key.Length)] = key[keyCharIndex];
+                }
+                else
+                {
+                    resultChars[(keyCharIndex - shift + key.Length) % (key.Length)] = key[keyCharIndex];
+                }
             }
 
             string result = "";
             foreach(var resultChar in resultChars)
-            {
-                result += resultChar;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// anahtar oluşturma
-        /// Circular Left shift
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static string KeyTransformationDecryption(string key, int index)
-        {
-            char[] resultChars = new char[key.Length];
-
-            int shift = Data.CircularLeftshiftTable.Reverse().ToArray()[index];
-
-            for (int keyCharIndex = 0; keyCharIndex < key.Length; keyCharIndex++)
-            {
-                resultChars[(keyCharIndex - shift + key.Length) % (key.Length)] = key[keyCharIndex];
-            }
-
-            string result = "";
-            foreach (var resultChar in resultChars)
             {
                 result += resultChar;
             }
@@ -142,6 +171,11 @@ namespace DESAlgorithm
             }
 
             return result;
+        }
+
+        public static char XOR(char one, char two)
+        {
+            return Data.XORData[one][two];
         }
     }
 }
