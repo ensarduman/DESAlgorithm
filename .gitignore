@@ -1,0 +1,7 @@
+
+DESAlgorithm/bin/*
+DESAlgorithm/obj/*
+DESTest/bin/*
+DESTest/obj/*
+.vs/*
+packages/*
