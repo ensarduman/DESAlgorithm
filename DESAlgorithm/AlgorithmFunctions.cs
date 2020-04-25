@@ -8,11 +8,13 @@ namespace DESAlgorithm
 {
     public class AlgorithmFunctions
     {
-        public static string Crypt(string data, string key, EnumProcessType processType)
+        public static string Crypt(string data, string hexKey, EnumProcessType processType)
         {
             //data karıştırılır
+            string binaryData = BinaryHelper.GetBitsFromString(data);
 
-            string binaryData = BinaryHelper.GetBits(data);
+            //hexKey bit string'e dönüşütürülür
+            string bitKey = BinaryHelper.GetBitsFromHex(hexKey);
 
             string result = "";
             for (int index = 0; index < ((decimal)binaryData.Length / (decimal)64); index++)
@@ -40,7 +42,7 @@ namespace DESAlgorithm
                 for (int cryptIndex = 0; cryptIndex < 16; cryptIndex++)
                 {
                     //Bu adım için 56 bitlik Key'den 48 bitlik yeni key üretilir
-                    var transformedKey = KeyTransformation(key, cryptIndex, processType);
+                    var transformedKey = KeyTransformation(bitKey, cryptIndex, processType);
 
                     //leftBinaryString öncelikle 48 bit'e genişletilir
                     leftBinaryString = ExpentsonPermutation(leftBinaryString);
@@ -66,7 +68,7 @@ namespace DESAlgorithm
                     break;
             }
 
-            return result;
+            return BinaryHelper.GetHexFromBits(result);
         }
 
         public static string XORArray(string input, string key)
