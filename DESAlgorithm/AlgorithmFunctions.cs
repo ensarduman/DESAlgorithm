@@ -46,13 +46,14 @@ namespace DESAlgorithm
                     leftBinaryString = ExpentsonPermutation(leftBinaryString);
 
                     //Key (48bit) ve leftBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
-                    string cryptedRightBinaryString = XORArray(leftBinaryString, transformedKey);
+                    leftBinaryString = XORArray(leftBinaryString, transformedKey);
 
                     //leftBinaryString tekrar 48'den 32 bit'e küçültülür(SBoxSubstuation)
+                    leftBinaryString = SBoxSubstitution(leftBinaryString);
 
                     //left ve right'ın yerleri değiştirilerek yeni adıma hazırlanır. (çaprazlama)
                     string prevLeftBinaryString = leftBinaryString;
-                    leftBinaryString = cryptedRightBinaryString;
+                    leftBinaryString = rightBinaryString;
                     rightBinaryString = prevLeftBinaryString;
                 }
 
@@ -149,7 +150,7 @@ namespace DESAlgorithm
                 shift = Data.CircularLeftshiftTable.Reverse().ToArray()[index];
             }
 
-            for(int keyCharIndex = 0; keyCharIndex < key.Length; keyCharIndex++)
+            for (int keyCharIndex = 0; keyCharIndex < key.Length; keyCharIndex++)
             {
                 if (processType == EnumProcessType.ENCRYPTION)
                 {
@@ -162,7 +163,7 @@ namespace DESAlgorithm
             }
 
             string result = "";
-            foreach(var resultChar in resultChars)
+            foreach (var resultChar in resultChars)
             {
                 result += resultChar;
             }
@@ -212,13 +213,72 @@ namespace DESAlgorithm
         }
 
         /// <summary>
-        /// 47 bitlik datayı 32 bit'e dönüştürür.
+        /// 48 bitlik datayı 32 bit'e dönüştürür.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         public static string SBoxSubstitution(string input)
         {
+            //48 biti 6 bitlik bloklara bölüyoruz
+            List<string> sixBitBlocks = new List<string>();
+            for (int inputIndex = 0; inputIndex < input.Length; inputIndex += 6)
+            {
+                if (inputIndex + 6 < input.Length)
+                {
+                    sixBitBlocks.Add(input.Substring(inputIndex, 6));
+                }
+                else
+                {
+                    sixBitBlocks.Add(input.Substring(inputIndex));
+                    break;
+                }
+            }
 
+            string result = "";
+
+            /*
+             Her bir blok için ilk ve son bit yan yana eklenip 
+             integer'a çevirilecek. elde edilen sayı satırı belirtecek.
+
+             Ortada kalanlar ise yine ineteger'a çevirilecek. elde edilen
+             sayı sütunu belirtecek.
+             */
+            for (int blockIndex = 0; blockIndex < sixBitBlocks.Count; blockIndex++)
+            {
+                //block tablosu index'e göre alınıyor
+                int[,] sBoxTable = Data.SBoxSubstitutionTables[blockIndex];
+
+                var block = sixBitBlocks[blockIndex];
+
+                //satır numarası alınıyor
+                string lineNumberBinary = "";
+
+                //baştaki rakam direkt alınıp block'tan kaldırılıyor
+                lineNumberBinary += block[0];
+                block = block.Remove(0, 1);
+
+                //ikinci rakam eğer var ise alınıp block'tan kaldırılıyor
+                if(block.Length > 0)
+                {
+                    lineNumberBinary += block[block.Length - 1];
+                    block = block.Remove(block.Length - 1, 1);
+                }
+
+                //satır sayısı alındı
+                int lineNumber = BinaryHelper.BinaryToInteger(lineNumberBinary);
+
+                //sütun numarası alınıyor
+                int columnNumber = 0;
+                if(block.Length > 0 )
+                {
+                    columnNumber = BinaryHelper.BinaryToInteger(block);
+                }
+
+                int intValue = sBoxTable[lineNumber, columnNumber];
+                result += BinaryHelper.IntegerToBinary(intValue, 4);
+            }
+
+            return result;
         }
     }
 }

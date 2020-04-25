@@ -17,6 +17,33 @@ namespace DESAlgorithm
             }
             return sb.ToString();
         }
+
+        public static int BinaryToInteger(string binary)
+        {
+            return Convert.ToInt32(binary, 2);
+        }
+
+        public static string IntegerToBinary(int intValue)
+        {
+            return IntegerToBinary(intValue, false, 0);
+        }
+
+        public static string IntegerToBinary(int intValue, int width)
+        {
+            return IntegerToBinary(intValue, true, 4);
+        }
+
+        private static string IntegerToBinary(int intValue, bool paddingLeft, int width)
+        {
+            var strValue = Convert.ToString(intValue, 2);
+
+            if (paddingLeft)
+            {
+                strValue = strValue.PadLeft(width, '0');
+            }
+
+            return strValue;
+        }
     }
 
     public enum EnumProcessType
