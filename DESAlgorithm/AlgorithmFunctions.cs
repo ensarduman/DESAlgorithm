@@ -210,5 +210,15 @@ namespace DESAlgorithm
         {
             return Data.XORData[one][two];
         }
+
+        /// <summary>
+        /// 47 bitlik datayı 32 bit'e dönüştürür.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string SBoxSubstitution(string input)
+        {
+
+        }
     }
 }
