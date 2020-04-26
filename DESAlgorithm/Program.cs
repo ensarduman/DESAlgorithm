@@ -12,7 +12,7 @@ namespace DESAlgorithm
         static void Main(string[] args)
         {
             string data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam varius, ex sit amet mollis convallis";
-            var hexKey = "BEAE1C4E084823";
+            var hexKey = "8E1823607165E3D6";
 
             var encrypted = AlgorithmFunctions.Encrypt(data, hexKey);
 

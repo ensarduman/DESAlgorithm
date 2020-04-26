@@ -33,6 +33,9 @@ namespace DESAlgorithm
             //hexKey bit string'e dönüşütürülür
             string bitKey = BinaryHelper.GetBitsFromHex(hexKey);
 
+            //Key 64 bit'ten 56 bit'e dönüştürülür
+            bitKey = CompressionPermutationKeyInit(bitKey);
+
             string result = "";
             for (int index = 0; index < ((decimal)binaryData.Length / (decimal)64); index++)
             {
@@ -64,7 +67,7 @@ namespace DESAlgorithm
                     //FUNCTION START
 
                     //rightBinaryString öncelikle 48 bit'e genişletilir
-                    var expandedRightBinaryString = ExpentsonPermutation(rightBinaryString);
+                    var expandedRightBinaryString = ExpensionPermutation(rightBinaryString);
 
                     //Key (48bit) ve expandedRightBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
                     expandedRightBinaryString = XORArray(expandedRightBinaryString, transformedKey);
@@ -200,6 +203,31 @@ namespace DESAlgorithm
             return result;
         }
 
+        /// <summary>
+        /// 64 bit to 56 bit compression
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string CompressionPermutationKeyInit(string input)
+        {
+            string result = "";
+
+            for(int inputIndex = 0; inputIndex < input.Length; inputIndex++)
+            {
+                if((inputIndex + 1) % 8 != 0)
+                {
+                    result += input[inputIndex];
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 56 bit to 48 bit compression
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string CompressionPermutation(string input)
         {
             string result = "";
@@ -215,7 +243,12 @@ namespace DESAlgorithm
             return result;
         }
 
-        public static string ExpentsonPermutation(string input)
+        /// <summary>
+        /// 32 to 48 bit expension
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ExpensionPermutation(string input)
         {
             string result = "";
 
