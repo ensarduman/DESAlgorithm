@@ -37,7 +37,18 @@ namespace DESAlgorithm
             bitKey = CompressionPermutationKeyInit(bitKey);
 
             string result = "";
+
+            List<int> roundIndexes = new List<int>();
+
             for (int index = 0; index < ((decimal)binaryData.Length / (decimal)64); index++)
+                roundIndexes.Add(index);
+
+            //On decrpytion, rounds are reversed
+            if (processType == EnumProcessType.DECRYPTION)
+                roundIndexes.Reverse();
+
+
+            foreach (int index in roundIndexes)
             {
                 bool finished = false;
 
@@ -46,10 +57,12 @@ namespace DESAlgorithm
                 if (currentBinaryString.Length > 64)
                 {
                     currentBinaryString = currentBinaryString.Substring(0, 64);
+
+                    finished = processType == EnumProcessType.DECRYPTION && index == 0;
                 }
                 else
                 {
-                    finished = true;
+                    finished = processType == EnumProcessType.ENCRYPTION || (processType == EnumProcessType.DECRYPTION && index == 0);
                 }
 
                 currentBinaryString = InitialPermutation(currentBinaryString);
@@ -64,21 +77,8 @@ namespace DESAlgorithm
                     //Bu adım için 56 bitlik Key'den 48 bitlik yeni key üretilir
                     var transformedKey = KeyTransformation(bitKey, cryptIndex, processType);
 
-                    //FUNCTION START
-
-                    //rightBinaryString öncelikle 48 bit'e genişletilir
-                    var expandedRightBinaryString = ExpensionPermutation(rightBinaryString);
-
-                    //Key (48bit) ve expandedRightBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
-                    expandedRightBinaryString = XORArray(expandedRightBinaryString, transformedKey);
-
-                    //leftBinaryString tekrar 48'den 32 bit'e küçültülür(SBoxSubstuation)
-                    expandedRightBinaryString = SBoxSubstitution(expandedRightBinaryString);
-
-                    //expandedRightBinaryString PBox tablosuna göre karıştırılıyor
-                    expandedRightBinaryString = PBoxPermutation(expandedRightBinaryString);
-
-                    //FUNCTION END
+                    //FUNCTION çalıştırılır
+                    var expandedRightBinaryString = MainFunction(rightBinaryString, transformedKey);
 
                     //leftBinaryString (48bit) ve expandedRightBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
                     leftBinaryString = XORArray(leftBinaryString, expandedRightBinaryString);
@@ -99,6 +99,25 @@ namespace DESAlgorithm
             }
 
             return result;
+        }
+
+        //Ana F fonksiyonu
+        public static string MainFunction(string rightBinaryString, string transformedKey)
+        {
+
+            //rightBinaryString öncelikle 48 bit'e genişletilir
+            var expandedRightBinaryString = ExpensionPermutation(rightBinaryString);
+
+            //Key (48bit) ve expandedRightBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
+            expandedRightBinaryString = XORArray(expandedRightBinaryString, transformedKey);
+
+            //leftBinaryString tekrar 48'den 32 bit'e küçültülür(SBoxSubstuation)
+            expandedRightBinaryString = SBoxSubstitution(expandedRightBinaryString);
+
+            //expandedRightBinaryString PBox tablosuna göre karıştırılıyor
+            expandedRightBinaryString = PBoxPermutation(expandedRightBinaryString);
+
+            return expandedRightBinaryString;
         }
 
         public static string XORArray(string input, string key)
@@ -206,8 +225,7 @@ namespace DESAlgorithm
         /// <summary>
         /// 64 bit to 56 bit compression
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param nameinputIndex></param>
         public static string CompressionPermutationKeyInit(string input)
         {
             string result = "";
