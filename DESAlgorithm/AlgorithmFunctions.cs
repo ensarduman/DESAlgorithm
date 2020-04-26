@@ -8,11 +8,28 @@ namespace DESAlgorithm
 {
     public class AlgorithmFunctions
     {
-        public static string Crypt(string data, string hexKey, EnumProcessType processType)
+        public static string Encrypt(string data, string hexKey)
         {
             //data karıştırılır
             string binaryData = BinaryHelper.GetBitsFromString(data);
 
+            var result = Crypt(binaryData, hexKey, EnumProcessType.ENCRYPTION);
+
+            return BinaryHelper.GetHexFromBits(result);
+        }
+
+        public static string Decrypt(string data, string hexKey)
+        {
+            //data karıştırılır
+            string binaryData = BinaryHelper.GetBitsFromHex(data);
+
+            var result = Crypt(binaryData, hexKey, EnumProcessType.DECRYPTION);
+
+            return BinaryHelper.GetStringFromBits(result);
+        }
+
+        public static string Crypt(string binaryData, string hexKey, EnumProcessType processType)
+        {
             //hexKey bit string'e dönüşütürülür
             string bitKey = BinaryHelper.GetBitsFromHex(hexKey);
 
@@ -68,7 +85,7 @@ namespace DESAlgorithm
                     break;
             }
 
-            return BinaryHelper.GetHexFromBits(result);
+            return result;
         }
 
         public static string XORArray(string input, string key)

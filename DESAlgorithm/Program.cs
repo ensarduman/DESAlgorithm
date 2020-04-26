@@ -14,9 +14,11 @@ namespace DESAlgorithm
             string data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam varius, ex sit amet mollis convallis";
             var hexKey = "BEAE1C4E084823";
 
-            var crypted = AlgorithmFunctions.Crypt(data, hexKey, EnumProcessType.ENCRYPTION);
+            var encrypted = AlgorithmFunctions.Encrypt(data, hexKey);
 
-            Console.WriteLine(crypted);
+            var decrypted = AlgorithmFunctions.Decrypt(encrypted, hexKey);
+
+            Console.WriteLine(encrypted);
             Console.ReadLine();
         }
     }
