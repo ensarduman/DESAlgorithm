@@ -71,8 +71,15 @@ namespace DESAlgorithm
                 string leftBinaryString = currentBinaryString.Substring(0, currentBinaryString.Length / 2);
                 string rightBinaryString = currentBinaryString.Substring(currentBinaryString.Length / 2);
 
-                //cryp işlemleri 16 kez tekrarlanır. Her adımda data çaprazlanır
+                var cryptIndexes = new List<int>();
                 for (int cryptIndex = 0; cryptIndex < 16; cryptIndex++)
+                    cryptIndexes.Add(cryptIndex);
+
+                if (processType == EnumProcessType.DECRYPTION)
+                    cryptIndexes.Reverse();
+
+                //cryp işlemleri 16 kez tekrarlanır. Her adımda data çaprazlanır
+                foreach (int cryptIndex in cryptIndexes)
                 {
                     //Bu adım için 56 bitlik Key'den 48 bitlik yeni key üretilir
                     var transformedKey = KeyTransformation(bitKey, cryptIndex, processType);
