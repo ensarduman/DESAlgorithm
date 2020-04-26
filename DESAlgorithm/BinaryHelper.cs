@@ -51,6 +51,7 @@ namespace DESAlgorithm
                 else
                 {
                     word = input.Substring(inputIndex);
+                    word = word.PadLeft(4, '0');
                     isFinished = true; ;
                 }
 
@@ -73,7 +74,7 @@ namespace DESAlgorithm
                     case "1110": hexadecimal += 'E'; break;
                     case "1111": hexadecimal += 'F'; break;
                     default:
-                        return "Invalid number";
+                        return $"Invalid number {word}";
                 }
 
                 if (isFinished)

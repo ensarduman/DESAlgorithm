@@ -61,14 +61,21 @@ namespace DESAlgorithm
                     //Bu adım için 56 bitlik Key'den 48 bitlik yeni key üretilir
                     var transformedKey = KeyTransformation(bitKey, cryptIndex, processType);
 
-                    //leftBinaryString öncelikle 48 bit'e genişletilir
-                    leftBinaryString = ExpentsonPermutation(leftBinaryString);
+                    //FUNCTION START
 
-                    //Key (48bit) ve leftBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
-                    leftBinaryString = XORArray(leftBinaryString, transformedKey);
+                    //rightBinaryString öncelikle 48 bit'e genişletilir
+                    var expandedRightBinaryString = ExpentsonPermutation(rightBinaryString);
+
+                    //Key (48bit) ve expandedRightBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
+                    expandedRightBinaryString = XORArray(expandedRightBinaryString, transformedKey);
 
                     //leftBinaryString tekrar 48'den 32 bit'e küçültülür(SBoxSubstuation)
-                    leftBinaryString = SBoxSubstitution(leftBinaryString);
+                    expandedRightBinaryString = SBoxSubstitution(expandedRightBinaryString);
+
+                    //FUNCTION END
+
+                    //leftBinaryString (48bit) ve expandedRightBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
+                    leftBinaryString = XORArray(leftBinaryString, expandedRightBinaryString);
 
                     //left ve right'ın yerleri değiştirilerek yeni adıma hazırlanır. (çaprazlama)
                     string prevLeftBinaryString = leftBinaryString;
