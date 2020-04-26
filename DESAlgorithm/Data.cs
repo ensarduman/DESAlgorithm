@@ -131,5 +131,12 @@ namespace DESAlgorithm
                 { 2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11}
             }
         };
+
+        //PBoxPermutationTable
+        public static int[] PBoxPermutationTable = new int[]
+        {
+            16,7,20,21,29,12,28,17,1,15,23,26,5,18,31,10,
+            2,8,24,14,32,27,3,9,19,13,30,6,22,11,4,25
+        };
     }
 }

@@ -72,6 +72,9 @@ namespace DESAlgorithm
                     //leftBinaryString tekrar 48'den 32 bit'e küçültülür(SBoxSubstuation)
                     expandedRightBinaryString = SBoxSubstitution(expandedRightBinaryString);
 
+                    //expandedRightBinaryString PBox tablosuna göre karıştırılıyor
+                    expandedRightBinaryString = PBoxPermutation(expandedRightBinaryString);
+
                     //FUNCTION END
 
                     //leftBinaryString (48bit) ve expandedRightBinaryString (48bit) XOR'lanır (her bit ikilik sistemde toplanıp mod2'si alınır)
@@ -302,6 +305,26 @@ namespace DESAlgorithm
 
                 int intValue = sBoxTable[lineNumber, columnNumber];
                 result += BinaryHelper.IntegerToBinary(intValue, 4);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 32 bitlik datayı karıştırarak yine 32 bit olarak verir
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string PBoxPermutation(string input)
+        {
+            string result = "";
+
+            foreach (int pBoxTableItem in Data.PBoxPermutationTable)
+            {
+                if (input.Length >= pBoxTableItem)
+                {
+                    result += input[pBoxTableItem - 1];
+                }
             }
 
             return result;
